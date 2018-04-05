@@ -1,0 +1,36 @@
+version: "3.4"
+
+services:
+
+  service:
+    build: .
+    environment:
+      - MICRO_REGISTRY_ADDRESS=consul:8500
+        #- MICRO_BROKER_ADDRESS=amqp://admin:password@rabbitmq:5672/
+      - MICRO_BROKER_ADDRESS=nats:4222
+      - MICRO_BROKER=nats
+
+  consul:
+    image: progrium/consul:latest
+    command: -server -bootstrap -rejoin
+    ports:
+      - "8500:8500"
+
+  nats:
+    image: nats:latest
+    hostname: nats
+    ports:
+      - "4222:4222"
+      - "6222:6222"
+      - "8222:8222"
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    hostname: rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=password
+    ports:
+      - "5672:5672"
+      - "6060:15672"
+
